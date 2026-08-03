@@ -1,0 +1,279 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.loading {
+  text-align: center;
+  padding: 48px;
+  color: var(--color-text-muted);
+}
+
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.simRow {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 16px;
+}
+
+.simControls {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field span {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.field select {
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  font-size: 13px;
+  color: var(--color-text);
+}
+
+.field select:focus {
+  outline: 2px solid var(--color-primary-light);
+  border-color: var(--color-primary);
+}
+
+.simActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.btnPrimary,
+.btnSecondary,
+.btnResolve {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.btnPrimary {
+  background: var(--color-primary);
+  color: white;
+  flex: 1;
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.btnSecondary {
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  flex: 1;
+}
+
+.btnSecondary:hover:not(:disabled) {
+  background: var(--color-surface);
+}
+
+.btnPrimary:disabled,
+.btnSecondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.previewHint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: 8px;
+}
+
+.localizationGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.resultField {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px;
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-light);
+}
+
+.resultIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.icon_healthy {
+  background: var(--color-healthy-bg);
+  color: var(--color-healthy);
+}
+
+.icon_fault {
+  background: var(--color-fault-bg);
+  color: var(--color-fault);
+}
+
+.icon_primary {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.resultLabel {
+  display: block;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.resultValue {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-top: 2px;
+}
+
+.affectedLayout {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: center;
+}
+
+.affectedSummary {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 180px;
+}
+
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.summaryLabel {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.summaryValue {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.faultText {
+  color: var(--color-fault);
+}
+
+.incidentCard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.incidentGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.incidentField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.incidentLabel {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.incidentValue {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.btnResolve {
+  align-self: flex-start;
+  background: var(--color-healthy);
+  color: white;
+  padding: 12px 28px;
+  font-size: 14px;
+}
+
+.btnResolve:hover {
+  background: #15803d;
+}
+
+@media (max-width: 1100px) {
+  .statsRow {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .simRow {
+    grid-template-columns: 1fr;
+  }
+
+  .localizationGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .incidentGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .statsRow {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .localizationGrid,
+  .incidentGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .affectedLayout {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,224 @@
+.horizontal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 8px;
+  overflow-x: auto;
+}
+
+.horizontalCompact {
+  padding: 8px 4px;
+}
+
+.transformerNode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 16px;
+  background: var(--color-primary-light);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  min-width: 100px;
+}
+
+.transformerLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.transformerId {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.verticalLine {
+  width: 2px;
+  height: 20px;
+  background: var(--color-border);
+}
+
+.poleRow {
+  display: flex;
+  align-items: center;
+}
+
+.poleCell {
+  display: flex;
+  align-items: center;
+}
+
+.hSpan {
+  width: 32px;
+  height: 3px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spanHealthy {
+  background: var(--color-healthy);
+}
+
+.spanFault {
+  background: var(--color-fault);
+}
+
+.faultMarker {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-fault);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.poleNode {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  border: 2px solid;
+  flex-shrink: 0;
+}
+
+.poleHealthy {
+  background: var(--color-healthy-bg);
+  border-color: var(--color-healthy);
+  color: var(--color-healthy);
+}
+
+.poleFault {
+  background: var(--color-fault-bg);
+  border-color: var(--color-fault);
+  color: var(--color-fault);
+}
+
+.poleWarning {
+  background: var(--color-warning-bg);
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+/* Vertical topology */
+.vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  min-height: 300px;
+}
+
+.vTransformer {
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  border: 2px solid;
+  text-align: center;
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+}
+
+.vLabel {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-transform: uppercase;
+}
+
+.vId {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.vSegment {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.vLine {
+  width: 3px;
+  height: 28px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vFaultMarker {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--color-fault);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vPole {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  border: 2px solid;
+}
+
+/* Affected chain */
+.affectedChain {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.affectedItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.affectedArrow {
+  color: var(--color-fault);
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px 0;
+  font-weight: 700;
+}
+
+.affectedBox {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  border: 2px solid;
+}
+
+.empty {
+  color: var(--color-text-muted);
+  font-size: 13px;
+  text-align: center;
+  padding: 24px;
+}
