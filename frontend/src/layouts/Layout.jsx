@@ -73,23 +73,24 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-border">
-          <NavLink
-            to="/settings"
-            className={({ isActive }) =>
-              `flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                isActive 
-                  ? 'bg-primary/10 text-primary' 
-                  : 'text-secondary hover:bg-gray-50 hover:text-textmain'
-              }`
-            }
-          >
-            <Settings size={20} />
-            <span>Settings</span>
-          </NavLink>
-        </div>
+
       </aside>
     </>
+  );
+};
+
+const LiveClock = () => {
+  const [time, setTime] = React.useState(new Date());
+
+  React.useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="text-sm font-semibold text-secondary mr-2">
+      {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+    </div>
   );
 };
 
@@ -112,10 +113,7 @@ const Topbar = ({ toggleSidebar }) => {
       </div>
 
       <div className="flex items-center space-x-3 lg:space-x-6">
-        <button className="relative p-2 text-secondary hover:bg-gray-100 rounded-full transition-colors">
-          <Bell size={20} />
-          <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-danger rounded-full border-2 border-card"></span>
-        </button>
+        <LiveClock />
         
         <div className="flex items-center space-x-3 pl-3 lg:pl-6 border-l border-border cursor-pointer">
           <div className="hidden md:block text-right">

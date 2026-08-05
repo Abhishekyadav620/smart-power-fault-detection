@@ -8,7 +8,7 @@ import Poles from './pages/Poles';
 import FaultSimulator from './pages/FaultSimulator';
 import Telemetry from './pages/Telemetry';
 import Incidents from './pages/Incidents';
-import Settings from './pages/Settings';
+
 import AISuggestions from './pages/AISuggestions';
 import Reports from './pages/Reports';
 
@@ -32,7 +32,7 @@ function App() {
           <Route path="telemetry" element={<Telemetry />} />
           <Route path="incidents" element={<Incidents />} />
           <Route path="simulator" element={<FaultSimulator />} />
-          <Route path="settings" element={<Settings />} />
+
           <Route path="ai-suggestions" element={<AISuggestions />} />
           <Route path="reports" element={<Reports />} />
           <Route path="*" element={<NotFound />} />
