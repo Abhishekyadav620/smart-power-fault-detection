@@ -1,4 +1,4 @@
-# What We Built
+# Smart-Power-Fault-Detection
 
 This project was developed to help electricity distribution companies reduce fault identification time from hours to just a few minutes. The system continuously monitors telemetry from IoT-enabled electricity poles, automatically localizes faults, creates incident tickets, and verifies restoration using live telemetry without relying on manual confirmation.
 
@@ -187,6 +187,77 @@ Deployment includes:
 - MongoDB Atlas
 
 ---
+# System Architecture
+# System Architecture
+
+
+                          ┌────────────────────────────┐
+                          │     IoT Pole Devices       │
+                          │  (Heartbeat / Power Lost)  │
+                          └──────────────┬─────────────┘
+                                         │
+                                         │ Telemetry
+                                         ▼
+                    ┌──────────────────────────────────┐
+                    │        Telemetry API             │
+                    │     (Express.js Backend)         │
+                    └──────────────────────────────────┘
+                                         │
+                                         ▼
+                    ┌──────────────────────────────────┐
+                    │  Telemetry Processing Layer      │
+                    │                                  │
+                    │ • Duplicate Filtering            │
+                    │ • Sequence Validation            │
+                    │ • Out-of-order Handling          │
+                    │ • Missing Heartbeat Detection    │
+                    └──────────────────────────────────┘
+                                         │
+                                         ▼
+                    ┌──────────────────────────────────┐
+                    │    Fault Localization Engine     │
+                    │                                  │
+                    │ • DFS Traversal                 │
+                    │ • Fault Span Detection          │
+                    │ • Confidence Calculation        │
+                    │ • GPS & Pincode Generation      │
+                    │ • Household Estimation          │
+                    └──────────────────────────────────┘
+                                         │
+                          ┌──────────────┴──────────────┐
+                          │                             │
+                          ▼                             ▼
+          ┌────────────────────────┐     ┌────────────────────────┐
+          │ Incident Management    │     │ Telemetry Database     │
+          │                        │     │                        │
+          │ • Create Incident      │     │ • Telemetry            │
+          │ • Status Workflow      │     │ • Pole Status          │
+          │ • Auto Verification    │     │ • Transformers         │
+          │ • Auto Close           │     │ • Incident History     │
+          └─────────────┬──────────┘     └────────────────────────┘
+                        │
+                        ▼
+            ┌──────────────────────────────┐
+            │      Gemini AI Service       │
+            │                              │
+            │ • Fault Explanation          │
+            │ • Root Cause Summary         │
+            │ • Repair Recommendation      │
+            └──────────────┬───────────────┘
+                           │
+                           ▼
+        ┌────────────────────────────────────────────┐
+        │            React Frontend                  │
+        │                                            │
+        │ • Dashboard                               │
+        │ • Network Topology                        │
+        │ • Fault Simulator                         │
+        │ • Telemetry                               │
+        │ • Incidents                               │
+        │ • AI Suggestions                          │
+        │ • Reports                                 │
+        └────────────────────────────────────────────┘
+```
 
 # Technology Stack
 
