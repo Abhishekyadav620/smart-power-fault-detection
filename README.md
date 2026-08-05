@@ -188,7 +188,7 @@ Deployment includes:
 
 ---
 # System Architecture
-# System Architecture
+
 
 
                           ┌────────────────────────────┐
@@ -257,7 +257,7 @@ Deployment includes:
         │ • AI Suggestions                          │
         │ • Reports                                 │
         └────────────────────────────────────────────┘
-```
+
 
 # Technology Stack
 
