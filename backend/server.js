@@ -20,11 +20,7 @@ connectDB();
 startIncidentMonitor();
 
 
-app.use(cors({
-    origin: process.env.FRONTEND_URL || '*',
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    credentials: true,
-}));
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
