@@ -10,11 +10,14 @@ const incidentRoutes = require("./routes/incidentRoutes");
 const simulatorRoutes = require("./routes/simulatorRoutes");
 const transformerRoutes = require("./routes/transformerRoutes");
 const poleRoutes = require("./routes/poleRoutes");
+const aiRoutes = require("./routes/aiRoutes");
+const { startIncidentMonitor } = require("./services/incidentMonitor");
 
 const app = express();
 
 
 connectDB();
+startIncidentMonitor();
 
 
 app.use(cors());
@@ -33,6 +36,7 @@ app.use("/api/incidents", incidentRoutes);
 app.use("/api/simulator", simulatorRoutes);
 app.use("/api/transformers", transformerRoutes);
 app.use("/api/poles", poleRoutes);
+app.use("/api/ai", aiRoutes);
 
 
 app.use((req, res) => {

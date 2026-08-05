@@ -50,6 +50,7 @@ const updateIncident = async (req, res) => {
       "transformerId",
       "feederId",
       "suspectedLocation",
+      "assignedCrew",
     ];
 
     const updates = {};
@@ -58,6 +59,18 @@ const updateIncident = async (req, res) => {
         updates[field] = req.body[field];
       }
     });
+
+    if (updates.status === "ACKNOWLEDGED") {
+      updates.acknowledgedAt = Date.now();
+    } else if (updates.status === "CREW ASSIGNED") {
+      updates.crewAssignedAt = Date.now();
+    } else if (updates.status === "RESOLVED") {
+      updates.resolvedAt = Date.now();
+    } else if (updates.status === "VERIFIED") {
+      updates.verifiedAt = Date.now();
+    } else if (updates.status === "CLOSED") {
+      updates.closedAt = Date.now();
+    }
 
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({
@@ -69,7 +82,7 @@ const updateIncident = async (req, res) => {
     const incident = await Incident.findOneAndUpdate(
       { incidentId: req.params.id },
       { $set: updates },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     );
 
     if (!incident) {

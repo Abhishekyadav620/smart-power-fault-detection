@@ -50,39 +50,38 @@ const generateNetwork = async () => {
 
       const poleCount = Math.floor(Math.random() * 20) + 15;//how many poles a specific transformer must have
 
-      let previousPole = null;//because first pole is connected to transformer itself
+      const transformerPoles = [];
 
       for (let j = 1; j <= poleCount && poleCounter <= TOTAL_POLES; j++) {
-
         const poleId = `P${String(poleCounter).padStart(4, "0")}`;
+        const hasDevice = Math.random() > 0.1; // 90% pole must be on
 
-        const hasDevice = Math.random() > 0.1;//means 90% pole must be on and 10% shoudl be off 
+        let parentPoleId = null;
+        if (j > 1) {
+          // Pick a random parent from previously created poles for this transformer
+          // To make it look like a balanced tree, we can pick a parent that has < 3 children
+          // But random selection among all previous poles naturally creates branches
+          const parentIndex = Math.floor(Math.random() * transformerPoles.length);
+          parentPoleId = transformerPoles[parentIndex].poleId;
+        }
 
-        poles.push({
+        const newPole = {
           poleId,
-
           latitude: baseLatitude + generateRandomOffset(),
-
           longitude: baseLongitude + generateRandomOffset(),
-
           pincode: "560001",
-
           transformerId,
-
           feederId,
-
-          parentPoleId: previousPole,
-
+          parentPoleId,
           sequenceOnLine: j,
-
           hasDevice,
-
           deviceId: hasDevice
             ? `DEV${String(poleCounter).padStart(4, "0")}`
             : null,
-        });
+        };
 
-        previousPole = poleId;//update the previous poel absically storing its parent 
+        poles.push(newPole);
+        transformerPoles.push(newPole);
 
         poleCounter++;
       }

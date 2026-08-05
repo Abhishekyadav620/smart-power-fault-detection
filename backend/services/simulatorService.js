@@ -107,6 +107,10 @@ const createIncidentDocument = async ({
     faultType,
     confidence,
     affectedHouseholds,
+    coordinates,
+    pincode,
+    affectedPoles,
+    detectionReason,
 }) => {
     const incident = await Incident.create({
         incidentId: generateUniqueId("INC"),
@@ -119,7 +123,11 @@ const createIncidentDocument = async ({
         faultType,
         confidence,
         affectedHouseholds,
-        status: "Open",
+        coordinates,
+        pincode,
+        affectedPoles,
+        detectionReason,
+        status: "DETECTED",
     });
 
     return incident;
@@ -162,6 +170,7 @@ const simulatePowerFault = async (faultData = {}) => {
         const transformerRoots = roots.length ? roots : [poles[0]];
         const rootPole = transformerRoots[0];
         affectedPoleIds = collectDescendants(rootPole.poleId, childrenMap);
+        affectedPoleIds.add(rootPole.poleId);
         simulatedFaultLocation = {
             type: "transformer_failure",
             transformerId,
@@ -205,6 +214,8 @@ const simulatePowerFault = async (faultData = {}) => {
 
         const upstreamPoleId = faultPole.parentPoleId || faultPole.poleId;
         affectedPoleIds = collectDescendants(faultPole.poleId, childrenMap);
+        affectedPoleIds.add(faultPole.poleId);
+        
         simulatedFaultLocation = {
             type: "span_fault",
             transformerId,
@@ -267,10 +278,27 @@ const simulatePowerFault = async (faultData = {}) => {
         const spans = localizedFaultSpans.length ? localizedFaultSpans : [{ upstreamPole: simulatedFaultLocation.fromPole, downstreamPole: simulatedFaultLocation.toPole }];
 
         for (const span of spans) {
+            const upstreamPole = poleMap.get(span.upstreamPole);
             const downstreamPole = poleMap.get(span.downstreamPole);
             const downstreamAffected = downstreamPole
                 ? collectDescendants(downstreamPole.poleId, childrenMap)
                 : affectedPoleIds;
+
+            let faultLat = transformer.latitude;
+            let faultLng = transformer.longitude;
+            let pincode = "N/A";
+            
+            if (upstreamPole && downstreamPole) {
+                faultLat = (upstreamPole.latitude + downstreamPole.latitude) / 2;
+                faultLng = (upstreamPole.longitude + downstreamPole.longitude) / 2;
+                if (upstreamPole.pincode === downstreamPole.pincode) {
+                    pincode = upstreamPole.pincode;
+                } else if (upstreamPole.pincode) {
+                    pincode = upstreamPole.pincode;
+                } else if (downstreamPole.pincode) {
+                    pincode = downstreamPole.pincode;
+                }
+            }
 
             const incident = await createIncidentDocument({
                 transformerId,
@@ -278,17 +306,22 @@ const simulatePowerFault = async (faultData = {}) => {
                 fromPole: span.upstreamPole,
                 toPole: span.downstreamPole,
                 faultType: "broken_edge",
-                confidence: 92,
+                confidence: 96,
                 affectedHouseholds: estimateHouseholds({
                     affectedPoleIds: downstreamAffected,
                     totalPoleCount: poles.length,
                     transformerHouseholds: transformer.householdsServed,
                 }),
+                coordinates: { latitude: faultLat, longitude: faultLng },
+                pincode,
+                affectedPoles: [...downstreamAffected],
+                detectionReason: `Multiple downstream poles lost power while upstream poles remained energized, indicating a wire break between ${span.upstreamPole} and ${span.downstreamPole}.`,
             });
 
             incidents.push(incident);
         }
     } else if (faultType === "transformer_failure") {
+        const rootPole = poles.length ? poles[0] : null;
         const incident = await createIncidentDocument({
             transformerId,
             feederId: transformer.feederId,
@@ -297,12 +330,17 @@ const simulatePowerFault = async (faultData = {}) => {
             faultType: "transformer_failure",
             confidence: 100,
             affectedHouseholds: transformer.householdsServed,
+            coordinates: { latitude: transformer.latitude, longitude: transformer.longitude },
+            pincode: rootPole ? rootPole.pincode : "N/A",
+            affectedPoles: [...affectedPoleIds],
+            detectionReason: `Entire DT ${transformerId} cluster lost power instantaneously, indicating failure at the transformer level.`,
         });
 
         incidents.push(incident);
     } else if (faultType === "feeder_failure") {
         const transformersOnFeeder = await Transformer.find({ feederId: transformer.feederId });
         const totalHouseholds = transformersOnFeeder.reduce((sum, item) => sum + (item.householdsServed || 0), 0);
+        const rootPole = poles.length ? poles[0] : null;
 
         const incident = await createIncidentDocument({
             transformerId,
@@ -312,10 +350,16 @@ const simulatePowerFault = async (faultData = {}) => {
             faultType: "transformer_failure",
             confidence: 100,
             affectedHouseholds: Math.max(1, totalHouseholds),
+            coordinates: { latitude: transformer.latitude, longitude: transformer.longitude },
+            pincode: rootPole ? rootPole.pincode : "N/A",
+            affectedPoles: [...affectedPoleIds],
+            detectionReason: `Multiple DTs on feeder ${transformer.feederId} lost power simultaneously, indicating upstream feeder fault.`,
         });
 
         incidents.push(incident);
     }
+
+    console.log("DEBUG affectedPoles:", [...affectedPoleIds]);
 
     return {
         faultType,
@@ -323,6 +367,10 @@ const simulatePowerFault = async (faultData = {}) => {
         affectedPoles: [...affectedPoleIds],
         affectedHouseholds: incidents.reduce((sum, incident) => sum + (incident.affectedHouseholds || 0), 0),
         incidentId: incidents[0] ? incidents[0].incidentId : null,
+        coordinates: incidents[0] ? incidents[0].coordinates : null,
+        pincode: incidents[0] ? incidents[0].pincode : "N/A",
+        confidence: incidents[0] ? incidents[0].confidence : 100,
+        detectionReason: incidents[0] ? incidents[0].detectionReason : "Unknown",
         incidents: incidents.map((incident) => ({
             incidentId: incident.incidentId,
             faultType: incident.faultType,
@@ -333,14 +381,8 @@ const simulatePowerFault = async (faultData = {}) => {
 
 const restoreNetwork = async () => {
     // Resolve all open incidents before restoring voltages across the network.
-    const openIncidents = await Incident.find({ status: { $ne: "Resolved" } });
-
-    if (openIncidents.length > 0) {
-        await Incident.updateMany(
-            { status: { $ne: "Resolved" } },
-            { $set: { status: "Resolved" } }
-        );
-    }
+    // Incidents will now be automatically verified and closed by the background monitor
+    // when it detects the power_on telemetry generated below.
 
     const poles = await Pole.find({ hasDevice: true, deviceId: { $ne: null } });
     const telemetryRecords = poles.map((pole) => ({
@@ -357,7 +399,6 @@ const restoreNetwork = async () => {
 
     return {
         success: true,
-        restoredIncidents: openIncidents.length,
         restoredPoles: poles.length,
     };
 };
@@ -365,4 +406,4 @@ const restoreNetwork = async () => {
 module.exports = {
     simulatePowerFault,
     restoreNetwork,
-};
+};  

@@ -46,6 +46,24 @@ const incidentSchema = new mongoose.Schema(
       max: 100,
     },
 
+    coordinates: {
+      latitude: { type: Number },
+      longitude: { type: Number },
+    },
+
+    pincode: {
+      type: String,
+      default: "N/A",
+    },
+
+    affectedPoles: [{
+      type: String,
+    }],
+
+    detectionReason: {
+      type: String,
+    },
+
     affectedHouseholds: {
       type: Number,
       required: true,
@@ -53,13 +71,37 @@ const incidentSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["Open", "Assigned", "Resolved"],
-      default: "Open",
+      enum: ["DETECTED", "ACKNOWLEDGED", "CREW ASSIGNED", "RESOLVED", "VERIFIED", "CLOSED"],
+      default: "DETECTED",
+    },
+
+    assignedCrew: {
+      type: String,
     },
 
     detectedAt: {
       type: Date,
       default: Date.now,
+    },
+
+    acknowledgedAt: {
+      type: Date,
+    },
+
+    crewAssignedAt: {
+      type: Date,
+    },
+
+    resolvedAt: {
+      type: Date,
+    },
+
+    verifiedAt: {
+      type: Date,
+    },
+
+    closedAt: {
+      type: Date,
     },
   },
   {
